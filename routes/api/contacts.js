@@ -53,10 +53,20 @@ contactsRouter.post("/", async (req, res, next) => {
   }
 });
 
-// contactsRouter.delete("/:contactId", async (req, res, next) => {
-//   const result = await contactService.removeContact(id);
-//   res.json(result);
-// });
+contactsRouter.delete("/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await contactService.removeContact(id);
+    if (!result) {
+      throw HttpError(404, `Contact with id=${id} - not found`);
+    }
+    res.json({
+      message: "Delete success",
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 contactsRouter.put("/:id", async (req, res, next) => {
   try {
