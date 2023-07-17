@@ -9,7 +9,7 @@ const contactsRouter = express.Router();
 const contactsAddSchema = Joi.object({
   name: Joi.string().required().messages({ "any.required": `"name" must be exist` }),
   email: Joi.string().email().required().messages({ "any.required": `"email" must be exist` }),
-  phone: Joi.number().required().messages({ "any.required": `"phone" must be exist` }),
+  phone: Joi.string().required().messages({ "any.required": `"phone" must be exist` }),
 });
 
 contactsRouter.get("/", async (req, res, next) => {
@@ -26,7 +26,7 @@ contactsRouter.get("/:id", async (req, res, next) => {
     const { id } = req.params;
     const result = await contactService.getContactById(id);
     if (!result) {
-      throw HttpError(404, `Movie with id=${id} - not found`);
+      throw HttpError(404, `Contact with id=${id} - not found`);
       // const error = new Error(`Movie with id=${id} - not found`);
       // error.status = 404;
       // throw error;
@@ -58,9 +58,22 @@ contactsRouter.post("/", async (req, res, next) => {
 //   res.json(result);
 // });
 
-// contactsRouter.put("/:contactId", async (req, res, next) => {
-//   const result = await contactService.updateContactById(id);
-//   res.json(result);
-// });
+contactsRouter.put("/:id", async (req, res, next) => {
+  try {
+    const { error } = contactsAddSchema.validate(req.body);
+    if (error) {
+      throw HttpError(400, error.message);
+    }
+
+    const { id } = req.params;
+    const result = await contactService.updateContactById(id, req.body);
+    if (!result) {
+      throw HttpError(404, `Contact with id=${id} - not found`);
+    }
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default contactsRouter;

@@ -40,15 +40,16 @@ export const addContact = async ({ name, email, phone }) => {
   return newContact;
 };
 
-export const updateContactById = async (contactId, { name, email, phone }) => {
-  const contacts = await getAllContacts();
-  const index = contacts.findIndex(contact => contact.id === contactId);
+export const updateContactById = async (id, { name, email, phone }) => {
+  const allContacts = await listContacts();
+  const index = allContacts.findIndex(contact => contact.id === id);
   if (index === -1) {
     return null;
   }
-  contacts[index] = { id, name, email, phone };
-  await updateContacts(contacts);
-  return contacts[index];
+  allContacts[index] = { id, name, email, phone };
+  await fs.writeFile(contactsPath, JSON.stringify(allContacts, null, 2));
+  // await updateContacts(contacts);
+  return allContacts[index];
 };
 
 export default {
