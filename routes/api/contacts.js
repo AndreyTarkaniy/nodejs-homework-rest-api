@@ -1,8 +1,5 @@
 import express from "express";
 
-// import contactsAddSchema from "../../schemas/schemas.js";
-// import contactService from "../../models/contacts.js";
-// import { HttpError } from "../../helpers/index.js";
 import control from "../../controllers/controllers.js";
 
 const contactsRouter = express.Router();
