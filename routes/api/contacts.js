@@ -13,7 +13,7 @@ contactsRouter.get("/:id", isValideId, control.getByID);
 
 contactsRouter.post("/", validateBody(schema.contactsAddSchema), control.add);
 
-// contactsRouter.delete("/:id", isValideId, control.deleteByID);
+contactsRouter.delete("/:id", isValideId, control.deleteByID);
 
 contactsRouter.put("/:id", isValideId, validateBody(schema.contactsAddSchema), control.updateById);
 

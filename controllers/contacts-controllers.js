@@ -21,18 +21,18 @@ const add = async (req, res) => {
   res.status(201).json(result);
 };
 
-// const deleteByID = async (req, res) => {
-//   const { id } = req.params;
+const deleteByID = async (req, res) => {
+  const { id } = req.params;
 
-//   const result = await contactService.removeContact(id);
-//   if (!result) {
-//     throw HttpError(404, `Contact with id=${id} - not found`);
-//   }
+  const result = await Contact.findByIdAndDelete(id);
+  if (!result) {
+    throw HttpError(404, `Contact with id=${id} - not found`);
+  }
 
-//   res.json({
-//     message: "Delete success",
-//   });
-// };
+  res.json({
+    message: "Delete success",
+  });
+};
 
 const updateById = async (req, res) => {
   const { id } = req.params;
@@ -56,7 +56,7 @@ export default {
   getAll: controlWrapper(getAll),
   getByID: controlWrapper(getByID),
   add: controlWrapper(add),
-  // deleteByID: controlWrapper(deleteByID),
+  deleteByID: controlWrapper(deleteByID),
   updateById: controlWrapper(updateById),
   updateFavorite: controlWrapper(updateFavorite),
 };
