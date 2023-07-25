@@ -1,7 +1,7 @@
 import express from "express";
 
-import control from "../../controllers/controllers.js";
-import contactsAddSchema from "../../schemas/schemas.js";
+import control from "../../controllers/contacts-controllers.js";
+import schema from "../../schemas/schemas.js";
 import { validateBody } from "../../decorators/index.js";
 import { isValideId } from "../../middleware/index.js";
 
@@ -11,10 +11,12 @@ contactsRouter.get("/", control.getAll);
 
 contactsRouter.get("/:id", isValideId, control.getByID);
 
-contactsRouter.post("/", validateBody(contactsAddSchema), control.add);
+contactsRouter.post("/", validateBody(schema.contactsAddSchema), control.add);
 
 // contactsRouter.delete("/:id", isValideId, control.deleteByID);
 
-// contactsRouter.put("/:id", isValideId, validateBody(contactsAddSchema), control.updateById);
+contactsRouter.put("/:id", isValideId, validateBody(schema.contactsAddSchema), control.updateById);
+
+contactsRouter.patch("/:id/favorite", isValideId, validateBody(schema.contactsUpdateFavorite), control.updateFavorite);
 
 export default contactsRouter;

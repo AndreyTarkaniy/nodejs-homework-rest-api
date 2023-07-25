@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-import { handleSaveError } from "./hooks.js";
+import { handleSaveError, handleUpdateValide } from "./hooks.js";
 import { phoneRegexp } from "../constans/contacts-constans.js";
 
 const contactsSchema = new Schema(
@@ -29,7 +29,10 @@ const contactsSchema = new Schema(
   },
 );
 
+contactsSchema.pre("findByIdAndUpdate", handleUpdateValide);
+
 contactsSchema.post("save", handleSaveError);
+contactsSchema.post("findByIdAndUpdate", handleSaveError);
 
 const Contact = model("contact", contactsSchema);
 
