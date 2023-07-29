@@ -1,8 +1,12 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 import User from "../models/userModel.js";
 import { controlWrapper } from "../decorators/index.js";
 import { HttpError } from "../helpers/index.js";
+
+const { JWT_SECRET } = process.env;
 
 const authSignup = async (req, res) => {
   const { email, password } = req.body;
@@ -35,7 +39,11 @@ const authSignin = async (req, res) => {
     throw HttpError(401, "email or password invalid");
   }
 
-  const token = "";
+  const payload = {
+    id: user._id,
+  };
+
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "24h" });
 
   res.json({
     token,
