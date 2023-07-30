@@ -6,8 +6,8 @@ import schema from "../../schemas/user-schema.js";
 
 const authRouter = express.Router();
 
-authRouter.post("/signup", validateBody(schema.userSignupSchema), authController.authSignup);
+authRouter.post("/register", validateBody(schema.userSignupSchema), authController.authSignup);
 
-authRouter.post("/signin", validateBody(schema.userSigninSchema), authController.authSignin);
+authRouter.post("/login", validateBody(schema.userSigninSchema), authController.authSignin);
 
 export default authRouter;

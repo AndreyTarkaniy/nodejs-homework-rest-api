@@ -3,8 +3,9 @@ import Contact from "../models/contactsModel.js";
 // import { contactsAddSchema, contactsUpdateFavorite } from "../schemas/schemas.js";
 import { controlWrapper } from "../decorators/index.js";
 
-const getAll = async (req, res) => {
-  const result = await Contact.find({}, "-createdAt -updatedAt");
+const getAll = async ({ user }, res) => {
+  const { _id: owner } = user;
+  const result = await Contact.find({ owner }, "-createdAt -updatedAt");
   res.json(result);
 };
 
@@ -16,8 +17,9 @@ const getByID = async (req, res) => {
   }
   res.json(result);
 };
-const add = async (req, res) => {
-  const result = await Contact.create(req.body);
+const add = async ({ body, user }, res) => {
+  const { _id: owner } = user;
+  const result = await Contact.create({ ...body, owner });
   res.status(201).json(result);
 };
 

@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-// import "dotenv/config";
+import "dotenv/config";
 
 import { HttpError } from "../helpers/index.js";
 import { controlWrapper } from "../decorators/index.js";
@@ -16,13 +16,14 @@ const authenticate = async (req, res, next) => {
 
   try {
     const { id } = jwt.verify(token, JWT_SECRET);
-    const user = User.findById(id);
+    const user = await User.findById(id);
     if (!user) {
-      throw HttpError(401);
+      throw HttpError(401, "Unauthorized");
     }
+    req.user = user;
     next();
   } catch (error) {
-    throw HttpError(401);
+    throw HttpError(401, "Unauthorized");
   }
 };
 
