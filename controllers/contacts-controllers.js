@@ -1,11 +1,13 @@
 import { HttpError } from "../helpers/index.js";
 import Contact from "../models/contactsModel.js";
-// import { contactsAddSchema, contactsUpdateFavorite } from "../schemas/schemas.js";
 import { controlWrapper } from "../decorators/index.js";
+import { query } from "express";
 
-const getAll = async ({ user }, res) => {
-  const { _id: owner } = user;
-  const result = await Contact.find({ owner }, "-createdAt -updatedAt");
+const getAll = async (req, res) => {
+  const { _id: owner } = req.user;
+  const { page = 1, limit = 20, ...query } = req.query;
+  const skip = (page - 1) * limit;
+  const result = await Contact.find({ owner, ...query }, "-createdAt -updatedAt", { skip, limit }).populate("owner", "name email");
   res.json(result);
 };
 
