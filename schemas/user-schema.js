@@ -12,4 +12,8 @@ const userSigninSchema = Joi.object({
   password: Joi.string().min(5).required(),
 });
 
-export default { userSignupSchema, userSigninSchema };
+const userSubscribtionSchema = Joi.object({
+  subscription: Joi.string().valid("starter", "pro", "business").required(),
+});
+
+export default { userSignupSchema, userSigninSchema, userSubscribtionSchema };

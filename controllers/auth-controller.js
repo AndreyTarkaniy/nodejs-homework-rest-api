@@ -65,9 +65,22 @@ const authLogout = async (req, res) => {
   });
 };
 
+const authSubscription = async (req, res) => {
+  const { id } = req.user;
+  // const { subscription } = req.body;
+  const result = await User.findByIdAndUpdate({ _id: id }, req.body, { new: true });
+  // const { name, email, subscription } = result;
+  res.json({
+    name: result.name,
+    email: result.email,
+    subscription: result.subscription,
+  });
+};
+
 export default {
   authSignup: controlWrapper(authSignup),
   authSignin: controlWrapper(authSignin),
   getCurrent: controlWrapper(getCurrent),
   authLogout: controlWrapper(authLogout),
+  authSubscription: controlWrapper(authSubscription),
 };
