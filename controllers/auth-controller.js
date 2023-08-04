@@ -4,6 +4,7 @@ import "dotenv/config";
 import fs from "fs/promises";
 import path from "path";
 import gravatar from "gravatar";
+import Jimp from "jimp";
 
 import User from "../models/userModel.js";
 import { controlWrapper } from "../decorators/index.js";
@@ -21,12 +22,6 @@ const authSignup = async (req, res) => {
   if (user) {
     throw HttpError(409, "user with this email is use");
   }
-
-  // const { path: oldPath, filename } = req.file;
-  // const newPath = path.join(avatarPath, filename);
-  // await fs.rename(oldPath, newPath);
-
-  // const avatarURL = path.resolve("avatars", filename);
 
   const newUser = await User.create({ ...req.body, avatarURL, password: passwordHash });
 
@@ -93,9 +88,19 @@ const avatarPath = path.resolve("public", "avatars");
 const avatarUpdate = async (req, res) => {
   const { id } = req.user;
   const { path: tempPath, filename } = req.file;
+
   const newPath = path.join(avatarPath, filename);
   await fs.rename(tempPath, newPath);
   const avatarURL = path.join("avatars", filename);
+
+  await Jimp.read(tempPath)
+    .then(newAvatar => {
+      return newAvatar.resize(250, 250).write(avatarURL);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+
   const updatedUser = await User.findByIdAndUpdate({ _id: id }, { avatarURL }, { new: true });
 
   res.json({
