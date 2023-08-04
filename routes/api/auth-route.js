@@ -7,7 +7,7 @@ import { upload, authenticate } from "../../middleware/index.js";
 
 const authRouter = express.Router();
 
-authRouter.post("/register", upload.single("avatar"), validateBody(schema.userSignupSchema), authController.authSignup);
+authRouter.post("/register", validateBody(schema.userSignupSchema), authController.authSignup);
 
 authRouter.post("/login", validateBody(schema.userSigninSchema), authController.authSignin);
 
@@ -16,5 +16,6 @@ authRouter.get("/current", authenticate, authController.getCurrent);
 authRouter.post("/logout", authenticate, authController.authLogout);
 
 authRouter.patch("/", authenticate, validateBody(schema.userSubscribtionSchema), authController.authSubscription);
+authRouter.patch("/avatar", authenticate, upload.single("avatar"), authController.avatarUpdate);
 
 export default authRouter;

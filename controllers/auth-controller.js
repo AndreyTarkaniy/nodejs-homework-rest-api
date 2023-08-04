@@ -11,8 +11,6 @@ import { HttpError } from "../helpers/index.js";
 
 const { JWT_SECRET } = process.env;
 
-const avatarPath = path.resolve("public", "avatars");
-
 const authSignup = async (req, res) => {
   const { email, password } = req.body;
 
@@ -40,7 +38,7 @@ const authSignup = async (req, res) => {
 };
 
 const authSignin = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, avatarURL } = req.body;
 
   const user = await User.findOne({ email });
   if (!user) {
@@ -61,12 +59,13 @@ const authSignin = async (req, res) => {
 
   res.json({
     token,
+    avatarURL,
   });
 };
 
 const getCurrent = (req, res) => {
-  const { name, email } = req.user;
-  res.json({ name, email });
+  const { name, email, avatarURL } = req.user;
+  res.json({ name, email, avatarURL });
 };
 
 const authLogout = async (req, res) => {
@@ -89,10 +88,26 @@ const authSubscription = async (req, res) => {
   });
 };
 
+const avatarPath = path.resolve("public", "avatars");
+
+const avatarUpdate = async (req, res) => {
+  const { id } = req.user;
+  const { path: tempPath, filename } = req.file;
+  const newPath = path.join(avatarPath, filename);
+  await fs.rename(tempPath, newPath);
+  const avatarURL = path.join("avatars", filename);
+  const updatedUser = await User.findByIdAndUpdate({ _id: id }, { avatarURL }, { new: true });
+
+  res.json({
+    avatarURL: updatedUser.avatarURL,
+  });
+};
+
 export default {
   authSignup: controlWrapper(authSignup),
   authSignin: controlWrapper(authSignin),
   getCurrent: controlWrapper(getCurrent),
   authLogout: controlWrapper(authLogout),
   authSubscription: controlWrapper(authSubscription),
+  avatarUpdate: controlWrapper(avatarUpdate),
 };
