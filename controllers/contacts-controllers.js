@@ -1,7 +1,7 @@
 import { HttpError } from "../helpers/index.js";
 import Contact from "../models/contactsModel.js";
 import { controlWrapper } from "../decorators/index.js";
-import { query } from "express";
+// import  query  from "express";
 
 const getAll = async (req, res) => {
   const { _id: owner } = req.user;
@@ -19,8 +19,10 @@ const getByID = async (req, res) => {
   }
   res.json(result);
 };
+
 const add = async ({ body, user }, res) => {
   const { _id: owner } = user;
+
   const result = await Contact.create({ ...body, owner });
   res.status(201).json(result);
 };
