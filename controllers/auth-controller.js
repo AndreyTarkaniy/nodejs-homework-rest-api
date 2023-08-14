@@ -41,6 +41,19 @@ const authSignup = async (req, res) => {
   });
 };
 
+const verifyEmail = async (req, res) => {
+  const { verificationToken } = req.params;
+  // const { id } = req.user;
+
+  const user = await User.findOne({ verificationToken });
+  if (!user) {
+    throw HttpError(404, "User not found");
+  }
+
+  await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: "" });
+  res.json({ message: "Verification successful" });
+};
+
 const authSignin = async (req, res) => {
   const { email, password, avatarURL } = req.body;
 
@@ -52,6 +65,10 @@ const authSignin = async (req, res) => {
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
     throw HttpError(401, "email or password invalid");
+  }
+
+  if (!user.verify) {
+    throw HttpError(400, "User not found");
   }
 
   const payload = {
@@ -119,6 +136,7 @@ const avatarUpdate = async (req, res) => {
 
 export default {
   authSignup: controlWrapper(authSignup),
+  verifyEmail: controlWrapper(verifyEmail),
   authSignin: controlWrapper(authSignin),
   getCurrent: controlWrapper(getCurrent),
   authLogout: controlWrapper(authLogout),
