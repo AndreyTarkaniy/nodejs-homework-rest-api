@@ -133,7 +133,6 @@ const authSubscription = async (req, res) => {
 };
 
 const avatarPath = path.resolve("public", "avatars");
-
 const avatarUpdate = async (req, res) => {
   const { id } = req.user;
   const { path: tempPath, filename } = req.file;
