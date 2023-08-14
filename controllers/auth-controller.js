@@ -5,25 +5,34 @@ import fs from "fs/promises";
 import path from "path";
 import gravatar from "gravatar";
 import Jimp from "jimp";
+import { nanoid } from "nanoid";
 
 import User from "../models/userModel.js";
 import { controlWrapper } from "../decorators/index.js";
-import { HttpError } from "../helpers/index.js";
+import { HttpError, sendMail } from "../helpers/index.js";
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET, BASE_URL } = process.env;
 
 const authSignup = async (req, res) => {
   const { email, password } = req.body;
 
   const passwordHash = await bcrypt.hash(password, 10);
   const avatarURL = gravatar.url(email);
+  const verificationToken = nanoid();
 
   const user = await User.findOne({ email });
   if (user) {
     throw HttpError(409, "user with this email is use");
   }
 
-  const newUser = await User.create({ ...req.body, avatarURL, password: passwordHash });
+  const newUser = await User.create({ ...req.body, avatarURL, password: passwordHash, verificationToken });
+
+  const verifyEmail = {
+    to: email,
+    subject: "Verify email",
+    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationToken}">Click to verify code</a>`,
+  };
+  await sendMail(verifyEmail);
 
   res.status(201).json({
     name: newUser.name,
